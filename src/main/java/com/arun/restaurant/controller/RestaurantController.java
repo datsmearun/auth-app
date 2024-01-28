@@ -46,17 +46,17 @@ public class RestaurantController {
     }
 
     @PostMapping
-    // admin can access (admin)
-    @PreAuthorize("hasRole('admin')")
-    public Restaurant createRestaurant(Restaurant restaurant) {
+    // admin can access
+    @PreAuthorize("hasRole('Administrator')")
+    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
         return restaurantRepository.save(restaurant);
     }
 
     @PostMapping
     @RequestMapping("/menu")
-    // manager can access (suresh)
+    // manager can access
     @PreAuthorize("hasRole('manager')")
-    public Menu createMenu(Menu menu) {
+    public Menu createMenu(@RequestBody Menu menu) {
         menuRepository.save(menu);
         menu.getMenuItems().forEach(menuItem -> {
             menuItem.setMenuId(menu.id);
@@ -67,8 +67,8 @@ public class RestaurantController {
 
     @PutMapping
     @RequestMapping("/menu/item/{itemId}/{price}")
-    // owner can access (amar)
-    @PreAuthorize("hasRole('owner')")
+    // owner can access
+    @PreAuthorize("hasRole('Owner')")
     public MenuItem updateMenuItemPrice(@PathVariable Long itemId
             , @PathVariable BigDecimal price) {
         Optional<MenuItem> menuItem = menuItemRepository.findById(itemId);

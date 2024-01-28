@@ -21,14 +21,14 @@ public class OrdersController {
 
     @GetMapping
     @RequestMapping("/{restaurantId}/list")
-    // manager can access (suresh)
+    // manager can access
     public List<Orders> getOrders(@PathVariable Long restaurantId) {
         return orderRepository.findByRestaurantId(restaurantId);
     }
 
     @GetMapping
     @RequestMapping("/{orderId}")
-    // manager can access (suresh)
+    // manager can access
     public Orders getOrderDetails(@PathVariable Long orderId) {
         Orders order = orderRepository.findById(orderId).get();
         order.setOrderItems(orderItemRepository.findByOrderId(order.getId()));
@@ -36,7 +36,7 @@ public class OrdersController {
     }
 
     @PostMapping
-    // authenticated users can access
+    // any authenticated users can access
     public Orders createOrder(Orders order) {
         orderRepository.save(order);
         List<OrderItems> orderItems = order.getOrderItems();

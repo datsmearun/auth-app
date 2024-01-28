@@ -1,5 +1,6 @@
 package com.arun.restaurant.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,9 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    //@Autowired
-    //JwtAuthConverter jwtAuthConverter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
@@ -33,8 +31,11 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
         });
         http.oauth2ResourceServer(t-> {
-            t.jwt(Customizer.withDefaults());
-            //t.opaqueToken(Customizer.withDefaults());
+
+            t.jwt(Customizer.withDefaults()); //-> This is with default config for the converter (for JWT auth within resource server)
+//            t.opaqueToken(Customizer.withDefaults()); -> This is same as above with (Opaque Token Auth)
+//            t.jwt(configurer -> configurer.jwtAuthenticationConverter(jwtAuthConverter)); // -> This is with custom JWTAuth converter to convert the KC roles to Spring boot's format oauth roles
+
         });
         http.sessionManagement(
                 t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -42,6 +43,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    //This bean is to override the 'ROLE_' from Security Expression
     @Bean
     public DefaultMethodSecurityExpressionHandler msecurity() {
         DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler =
@@ -50,6 +52,8 @@ public class SecurityConfig {
         return defaultMethodSecurityExpressionHandler;
     }
 
+    //Configuring the roles as default config for the JwtAuthConfig
+    //Now we do not need the custom JwtAuthenticationConverter
     @Bean
     public JwtAuthenticationConverter con() {
         JwtAuthenticationConverter c =new JwtAuthenticationConverter();
